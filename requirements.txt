@@ -1,0 +1,11 @@
+flask
+python-dotenv
+openai
+langchain
+langchain-openai
+langchain-community
+autogen-agentchat
+autogen-ext[openai]
+pypdf
+faiss-cpu
+pypdf

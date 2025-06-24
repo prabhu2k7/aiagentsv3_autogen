@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDF RAG QA</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body { padding: 2rem; }
+    #chat-box { max-height: 60vh; overflow-y: auto; margin-bottom: 1rem; }
+    .user-msg { text-align: right; margin: .5rem 0; }
+    .bot-msg  { text-align: left;  margin: .5rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-3">PDF RAG QA</h1>
+    <h5 class="text-muted mb-4">Oncology vs Neurology</h5>
+
+    <div id="chat-box" class="border p-3"></div>
+
+    <form id="qa-form" class="d-flex">
+      <input
+        id="question-input"
+        class="form-control me-2"
+        placeholder="Ask a question..."
+        autocomplete="off"
+      />
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("qa-form");
+    const input = document.getElementById("question-input");
+    const chat  = document.getElementById("chat-box");
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+
+      chat.innerHTML += `<div class="user-msg"><strong>You:</strong> ${q}</div>`;
+      input.value = "";
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: q })
+        });
+        const { answer } = await res.json();
+        chat.innerHTML += `<div class="bot-msg"><strong>Bot:</strong> ${answer}</div>`;
+      } catch (err) {
+        chat.innerHTML += `<div class="bot-msg text-danger"><strong>Error:</strong> ${err}</div>`;
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+    });
+  </script>
+</body>
+</html>
